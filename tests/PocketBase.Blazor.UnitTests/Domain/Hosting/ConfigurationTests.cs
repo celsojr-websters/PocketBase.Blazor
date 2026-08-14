@@ -15,7 +15,7 @@ public class ConfigurationTests
         // Arrange
         Environment.SetEnvironmentVariable("POCKETBASE_HOST", "0.0.0.0");
         Environment.SetEnvironmentVariable("POCKETBASE_PORT", "8888");
-        Environment.SetEnvironmentVariable("POCKETBASE_DIR", "./custom_data");
+        Environment.SetEnvironmentVariable("POCKETBASE_DATA_DIR", "./custom_data");
         Environment.SetEnvironmentVariable("POCKETBASE_DEV", "true");
 
         try
@@ -41,7 +41,7 @@ public class ConfigurationTests
             // Clean up
             Environment.SetEnvironmentVariable("POCKETBASE_HOST", null);
             Environment.SetEnvironmentVariable("POCKETBASE_PORT", null);
-            Environment.SetEnvironmentVariable("POCKETBASE_DIR", null);
+            Environment.SetEnvironmentVariable("POCKETBASE_DATA_DIR", null);
             Environment.SetEnvironmentVariable("POCKETBASE_DEV", null);
         }
     }
@@ -53,7 +53,7 @@ public class ConfigurationTests
         string configJson = @"{
             ""Host"": ""192.168.1.100"",
             ""Port"": 9090,
-            ""Dir"": ""./config_data"",
+            ""DataDir"": ""./config_data"",
             ""Dev"": false
         }";
 

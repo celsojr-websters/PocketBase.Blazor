@@ -2,6 +2,7 @@ namespace PocketBase.Blazor.Responses.Settings
 {
     public sealed class MetaSettingsResponse
     {
+        public string? AccentColor { get; init; }
         public string? AppName { get; init; }
         public string? AppUrl { get; init; }
         public string? SenderName { get; init; }
@@ -9,4 +10,3 @@ namespace PocketBase.Blazor.Responses.Settings
         public bool HideControls { get; init; }
     }
 }
-

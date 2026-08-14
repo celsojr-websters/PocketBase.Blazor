@@ -213,7 +213,7 @@ var host = await PocketBaseHostBuilder.CreateDefault()
     .UseOptions(o =>
     {
         o.DataDir = "./pb_data";
-        o.MigrationsDir = "./pb_migrations"; // optional; defaults to <Dir>/pb_migrations
+        o.MigrationsDir = "./pb_migrations"; // optional; defaults to <DataDir>/pb_migrations
         o.Dev = true;
     })
     .UseSchemaTemplate(CommonSchema.Todo) // Bare bones to-do app schema
@@ -223,7 +223,7 @@ var host = await PocketBaseHostBuilder.CreateDefault()
 Behavior:
 
 - The library generates migration `.js` files for selected templates.
-- Files are written to `MigrationsDir` when set; otherwise to `<Dir>/pb_migrations`.
+- Files are written to `MigrationsDir` when set; otherwise to `<DataDir>/pb_migrations`.
 - Schema validation and migration execution remain PocketBase responsibilities during host startup.
 
 ## Samples

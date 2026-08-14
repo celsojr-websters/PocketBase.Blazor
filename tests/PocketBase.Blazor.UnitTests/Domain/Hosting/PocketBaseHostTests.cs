@@ -121,6 +121,25 @@ public class PocketBaseHostTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task DisposeAsync_ShouldBeIdempotent()
+    {
+        // Arrange
+        _host.Should().NotBeNull();
+        await _host.StartAsync();
+        _host.Process.Should().NotBeNull();
+        int processId = _host.Process.Id;
+
+        // Act
+        await _host.DisposeAsync();
+        await _host.DisposeAsync();
+
+        // Assert - second dispose must not throw and the process must be gone
+        _host.Process.Should().BeNull();
+        Assert.Throws<ArgumentException>(() =>
+            Process.GetProcessById(processId));
+    }
+
+    [Fact]
     public async Task RestartAsync_ShouldStopAndStart()
     {
         // Arrange

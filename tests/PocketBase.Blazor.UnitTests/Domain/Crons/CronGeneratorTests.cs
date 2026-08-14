@@ -115,4 +115,32 @@ public class CronGeneratorTests
         
         handlersContent.Should().Contain("log.Println(\"cron 'default_cron' executed\", payload)");
     }
+
+    [Fact]
+    public async Task GenerateAsync_writes_go_mod_pinned_to_current_pocketbase_version()
+    {
+        // Arrange
+        string tempDir = Path.Combine(Path.GetTempPath(), "pb_crons_test_gomod");
+        if (Directory.Exists(tempDir)) Directory.Delete(tempDir, true);
+
+        CronManifest manifest = new CronManifest
+        {
+            Crons = [new() { Id = "hello", HandlerBody = "" }]
+        };
+
+        CronGenerationOptions options = new CronGenerationOptions
+        {
+            ProjectDirectory = tempDir,
+            BuildBinary = false
+        };
+
+        // Act
+        await _generator.GenerateAsync(manifest, options, CancellationToken.None);
+
+        // Assert
+        string goMod = await File.ReadAllTextAsync(Path.Combine(tempDir, "go.mod"));
+
+        goMod.Should().Contain("go 1.25.0");
+        goMod.Should().Contain("require github.com/pocketbase/pocketbase v0.39.11");
+    }
 }

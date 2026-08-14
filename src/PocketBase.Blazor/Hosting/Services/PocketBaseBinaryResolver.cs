@@ -13,7 +13,13 @@ namespace PocketBase.Blazor.Hosting.Services
     {
         private static readonly HttpClient _httpClient = new();
         private static ILogger? _logger = NullLogger.Instance;
-        private const string Version = "0.34.0";
+
+        /// <summary>
+        /// The PocketBase release version downloaded by <see cref="ResolveAsync"/>
+        /// when no local executable is found.
+        /// </summary>
+        public const string Version = "0.39.11";
+
         private const string BaseDownloadUrl = "https://github.com/pocketbase/pocketbase/releases/download";
 
         public static ILogger Logger

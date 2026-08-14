@@ -95,7 +95,16 @@ namespace PocketBase.Blazor.Clients.Record
         {
             ArgumentNullException.ThrowIfNull(request, nameof(request));
             EnsureRecordAuthBoundary(nameof(AuthWithOAuth2CodeAsync));
-            return await Http.SendAsync<AuthRecordResponse>(HttpMethod.Post, "api/collections/users/auth-with-oauth2", request, options?.ToDictionary(), cancellationToken);
+
+            Result<AuthRecordResponse> result = await Http.SendAsync<AuthRecordResponse>(HttpMethod.Post, $"api/collections/{CollectionName}/auth-with-oauth2", request, options?.ToDictionary(), cancellationToken);
+
+            if (result.IsSuccess)
+            {
+                _authStore?.Save(result.Value);
+                return Result.Ok(result.Value);
+            }
+
+            return Result.Fail(result.Errors);
         }
 
         /// <inheritdoc />
@@ -141,7 +150,7 @@ namespace PocketBase.Blazor.Clients.Record
             options ??= new CommonOptions();
             options.Query = options.BuildQuery();
 
-            Result<AuthResponse> result = await Http.SendAsync<AuthResponse>(HttpMethod.Post, "api/collections/users/auth-refresh", query: options.Query, cancellationToken: cancellationToken);
+            Result<AuthResponse> result = await Http.SendAsync<AuthResponse>(HttpMethod.Post, $"api/collections/{CollectionName}/auth-refresh", query: options.Query, cancellationToken: cancellationToken);
 
             if (result.IsSuccess)
             {
