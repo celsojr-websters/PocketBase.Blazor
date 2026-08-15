@@ -1,5 +1,6 @@
 namespace PocketBase.Blazor.UnitTests.TestHelpers.Extensions;
 
+using System.Text;
 using System.Text.RegularExpressions;
 
 public static class StringExtensions
@@ -28,7 +29,7 @@ public static class StringExtensions
         if (string.IsNullOrEmpty(text))
             return string.Empty;
 
-        byte[] bytes = System.Text.Encoding.UTF8.GetBytes(text);
+        byte[] bytes = Encoding.UTF8.GetBytes(text);
         return Convert.ToBase64String(bytes);
     }
 
@@ -38,6 +39,6 @@ public static class StringExtensions
             return string.Empty;
 
         byte[] bytes = Convert.FromBase64String(base64Text);
-        return System.Text.Encoding.UTF8.GetString(bytes);
+        return Encoding.UTF8.GetString(bytes);
     }
 }
