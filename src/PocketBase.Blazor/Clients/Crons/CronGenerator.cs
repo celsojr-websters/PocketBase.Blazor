@@ -52,9 +52,9 @@ namespace PocketBase.Blazor.Clients.Crons
             string goModContent = $"""
                 module {moduleName}
 
-                go 1.25.0
+                go 1.27.0
 
-                require github.com/pocketbase/pocketbase v0.39.11
+                require github.com/pocketbase/pocketbase v0.40.1
                 """;
             string goModFilePath = Path.Combine(options.ProjectDirectory, "go.mod");
             await File.WriteAllTextAsync(goModFilePath, goModContent, cancellationToken);

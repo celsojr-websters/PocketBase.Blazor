@@ -46,6 +46,12 @@ namespace PocketBase.Blazor.Clients.Logging
             IDictionary<string, object?>? query = options?.ToDictionary();
             return await _http.SendAsync<List<HourlyStatsResponse>>(HttpMethod.Get, "api/logs/stats", query: query, cancellationToken: cancellationToken);
         }
+
+        /// <inheritdoc />
+        public Task<Result> DeleteAsync(CancellationToken cancellationToken = default)
+        {
+            return _http.SendAsync(HttpMethod.Delete, "api/logs", cancellationToken: cancellationToken);
+        }
     }
 }
 

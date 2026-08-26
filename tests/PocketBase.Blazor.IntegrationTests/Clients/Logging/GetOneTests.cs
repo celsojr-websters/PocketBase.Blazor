@@ -17,7 +17,7 @@ public class GetOneTests
     [Fact]
     public async Task GetOneAsync_ReturnsLog_WhenValidId()
     {
-        // Arrange - get an existing log id
+        // Arrange - get an existing log id (ensure at least one log exists - DeleteLogs may have cleared them)
         Result<ListResult<LogResponse>> listResult = await _pb.Log.GetListAsync(
             perPage: 1,
             options: new ListOptions()
@@ -25,6 +25,22 @@ public class GetOneTests
                 SkipTotal = true
             });
         listResult.IsSuccess.Should().BeTrue();
+        for (int i = 0; i < 5 && !listResult.Value.Items.Any(); i++)
+        {
+            // Generate a request log by creating a temporary post (reads are not reliably logged in 0.40.1, writes are)
+            Result<RecordModel> gen = await _pb.Collection("posts").CreateAsync<RecordModel>(new
+            {
+                title = $"loggen-{Guid.NewGuid():N}"[..12],
+                slug = $"loggen-{Guid.NewGuid():N}"[..12],
+                content = "log gen",
+                author = "admin"
+            });
+            gen.IsSuccess.Should().BeTrue();
+            await Task.Delay(2500);
+            listResult = await _pb.Log.GetListAsync(perPage: 1, options: new ListOptions { SkipTotal = true });
+            listResult.IsSuccess.Should().BeTrue();
+        }
+        listResult.Value.Items.Should().NotBeEmpty();
         string? logId = listResult.Value.Items.First().Id;
 
         // Act
@@ -57,9 +73,24 @@ public class GetOneTests
     [Fact]
     public async Task GetOneAsync_ReturnsLogWithOptions_WhenFieldsSpecified()
     {
-        // Arrange
+        // Arrange - ensure at least one log exists
         Result<ListResult<LogResponse>> listResult = await _pb.Log.GetListAsync(perPage: 1);
         listResult.IsSuccess.Should().BeTrue();
+        for (int i = 0; i < 5 && !listResult.Value.Items.Any(); i++)
+        {
+            Result<RecordModel> gen = await _pb.Collection("posts").CreateAsync<RecordModel>(new
+            {
+                title = $"loggen-{Guid.NewGuid():N}"[..12],
+                slug = $"loggen-{Guid.NewGuid():N}"[..12],
+                content = "log gen",
+                author = "admin"
+            });
+            gen.IsSuccess.Should().BeTrue();
+            await Task.Delay(2500);
+            listResult = await _pb.Log.GetListAsync(perPage: 1);
+            listResult.IsSuccess.Should().BeTrue();
+        }
+        listResult.Value.Items.Should().NotBeEmpty();
         string? logId = listResult.Value.Items.First().Id;
 
         CommonOptions options = new CommonOptions

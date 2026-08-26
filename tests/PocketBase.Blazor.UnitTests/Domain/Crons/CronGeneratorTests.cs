@@ -140,7 +140,7 @@ public class CronGeneratorTests
         // Assert
         string goMod = await File.ReadAllTextAsync(Path.Combine(tempDir, "go.mod"));
 
-        goMod.Should().Contain("go 1.25.0");
-        goMod.Should().Contain("require github.com/pocketbase/pocketbase v0.39.11");
+        goMod.Should().Contain("go 1.27.0");
+        goMod.Should().Contain("require github.com/pocketbase/pocketbase v0.40.1");
     }
 }
