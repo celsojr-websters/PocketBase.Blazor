@@ -47,6 +47,15 @@ namespace PocketBase.Blazor.Clients.Logging
         /// Thrown when the client receives an invalid response.
         /// </exception>
         Task<Result<List<HourlyStatsResponse>>> GetStatsAsync(LogStatsOptions? options = null, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Deletes all logs.
+        /// </summary>
+        /// <param name="cancellationToken">Optional cancellation token.</param>
+        /// <exception cref="ClientResponseError">
+        /// Thrown when the client receives an invalid response.
+        /// </exception>
+        Task<Result> DeleteAsync(CancellationToken cancellationToken = default);
     }
 }
 

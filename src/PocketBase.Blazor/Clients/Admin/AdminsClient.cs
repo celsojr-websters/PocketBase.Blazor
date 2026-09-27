@@ -14,6 +14,7 @@ namespace PocketBase.Blazor.Clients.Admin
     /// <inheritdoc />
     public class AdminsClient : IAdminsClient
     {
+        private const string SuperusersCollection = "_superusers";
         private PocketBaseStore? _authStore;
         private readonly IHttpTransport _http;
 
@@ -38,7 +39,7 @@ namespace PocketBase.Blazor.Clients.Admin
                 ["password"] = password
             };
 
-            Result<AuthResponse> result = await _http.SendAsync<AuthResponse>(HttpMethod.Post, "api/collections/_superusers/auth-with-password", body, cancellationToken: cancellationToken);
+            Result<AuthResponse> result = await _http.SendAsync<AuthResponse>(HttpMethod.Post, $"api/collections/{SuperusersCollection}/auth-with-password", body, cancellationToken: cancellationToken);
 
             if (result.IsSuccess)
             {
@@ -57,7 +58,7 @@ namespace PocketBase.Blazor.Clients.Admin
             options ??= new CommonOptions();
             options.Query = options.BuildQuery();
 
-            Result<AuthResponse> result = await _http.SendAsync<AuthResponse>(HttpMethod.Post, "api/_superusers/auth-refresh", query: options.Query, cancellationToken: cancellationToken);
+            Result<AuthResponse> result = await _http.SendAsync<AuthResponse>(HttpMethod.Post, $"api/collections/{SuperusersCollection}/auth-refresh", query: options.Query, cancellationToken: cancellationToken);
 
             if (result.IsSuccess)
             {
@@ -98,11 +99,12 @@ namespace PocketBase.Blazor.Clients.Admin
         }
 
         /// <inheritdoc />
-        public async Task<Result> LogoutAsync(CancellationToken cancellationToken = default)
+        public Task<Result> LogoutAsync(CancellationToken cancellationToken = default)
         {
-            await _http.SendAsync(HttpMethod.Post, "api/_superusers/logout", body: null, cancellationToken: cancellationToken);
+            // PocketBase has no logout endpoint; superuser sessions are stateless JWTs,
+            // so logging out only requires clearing the local auth state.
             _authStore?.Clear();
-            return Result.Ok();
+            return Task.FromResult(Result.Ok());
         }
 
         /// <inheritdoc />

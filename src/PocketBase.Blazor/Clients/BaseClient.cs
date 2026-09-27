@@ -124,7 +124,7 @@ namespace PocketBase.Blazor.Clients
         public virtual async Task<Result<T>> CreateAsync<T>(object? body = null, CommonOptions? options = null, CancellationToken cancellationToken = default)
             where T : BaseModel
         {
-            object? mergedBody = MergeBodies(body, options?.Body as Dictionary<string, object?>);
+            object? mergedBody = MergeBodies(body, options?.Body);
             return await Http.SendAsync<T>(
                 HttpMethod.Post,
                 BasePath,
@@ -140,7 +140,7 @@ namespace PocketBase.Blazor.Clients
             if (string.IsNullOrWhiteSpace(id))
                 throw new ArgumentException("Collection id or name is required.", nameof(id));
 
-            object? mergedBody = MergeBodies(body, options?.Body as Dictionary<string, object?>);
+            object? mergedBody = MergeBodies(body, options?.Body);
             return await Http.SendAsync<T>(
                 HttpMethod.Patch,
                 $"{BasePath}/{UrlEncode(id)}",
@@ -177,14 +177,23 @@ namespace PocketBase.Blazor.Clients
                       );
         }
 
-        private static object? MergeBodies(object? body, Dictionary<string, object?>? optionsBody)
+        private static object? MergeBodies(object? body, object? optionsBody)
         {
             if (body == null) return optionsBody;
             if (optionsBody == null && body is not IDictionary<string, object?>) return body;
 
             // convert main body to dictionary if needed
             IDictionary<string, object?> mainDict = body is IDictionary<string, object?> d ? d : ToDictionary(body);
-            Dictionary<string, object?> result = new Dictionary<string, object?>(optionsBody ?? new Dictionary<string, object?>());
+
+            // convert options body to dictionary if needed
+            IDictionary<string, object?> optionsDict = optionsBody switch
+            {
+                null => new Dictionary<string, object?>(),
+                IDictionary<string, object?> dict => dict,
+                _ => ToDictionary(optionsBody)
+            };
+
+            Dictionary<string, object?> result = new Dictionary<string, object?>(optionsDict);
 
             // main body overrides options.Body
             foreach (KeyValuePair<string, object?> kv in mainDict)

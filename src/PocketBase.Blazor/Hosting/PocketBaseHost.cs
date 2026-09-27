@@ -193,9 +193,13 @@ namespace PocketBase.Blazor.Hosting
         {
             await StopAsync();
 
-            _process.OutputDataReceived -= OnOutputDataReceived;
-            _process.ErrorDataReceived -= OnErrorDataReceived;
-            _process.Dispose();
+            if (_process is not null)
+            {
+                _process.OutputDataReceived -= OnOutputDataReceived;
+                _process.ErrorDataReceived -= OnErrorDataReceived;
+                _process.Dispose();
+            }
+
             _process = null!;
             _cts.Dispose();
         }
